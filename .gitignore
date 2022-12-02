@@ -1,0 +1,3 @@
+#carpetas a ignorar
+.idea
+target
