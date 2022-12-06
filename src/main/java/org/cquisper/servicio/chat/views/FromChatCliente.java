@@ -93,10 +93,16 @@ public class FromChatCliente extends JFrame {
         panelChat.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 0, 413, 44));
 
         txtChatTexto.setBorder(null);
+        txtChatTexto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtChatTextoActionPerformed(evt);
+            }
+        });
         panelChat.add(txtChatTexto, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 270, 420, 20));
 
         btnEnviar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/static/img/Fill 1.png"))); // NOI18N
         btnEnviar.setBorder(null);
+        btnEnviar.setContentAreaFilled(false);
         btnEnviar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnEnviar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -153,8 +159,16 @@ public class FromChatCliente extends JFrame {
     }//GEN-LAST:event_txtUsernameActionPerformed
 
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
-        // TODO add your handling code here:
+        if (txtChatTexto.getText() == null || txtChatTexto.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Escribe algo");
+        }
     }//GEN-LAST:event_btnEnviarActionPerformed
+
+    private void txtChatTextoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtChatTextoActionPerformed
+        if (txtChatTexto.getText() == null || txtChatTexto.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "Escribe algo");
+        }
+    }//GEN-LAST:event_txtChatTextoActionPerformed
 
     public JButton getBtnEnviar() {
         return btnEnviar;
