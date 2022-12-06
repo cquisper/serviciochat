@@ -9,7 +9,7 @@ public class SocketServidor {
 
     public static Socket getSocketServidor() throws IOException {
 
-        socketServidor = new Socket("your-ip", 9999); //Ip y puerto del servidor
+        socketServidor = new Socket("192.168.43.105", 9999); //Ip y puerto del servidor
 
         return socketServidor;
     }
