@@ -90,7 +90,8 @@ public class ChatServiceImpl implements ChatService{
 
                     for (UsuarioDTO ipUsuario : ipUsuarios) {
                         if(ipUsuario.equals(usuarioDTOrepetido)){
-                            chatClienteView.getTxtUsername().setText(ipUsuario.getUsuario());
+                            System.out.println("usuario repetido");
+                            //chatClienteView.getTxtUsername().setText(ipUsuario.getUsuario());
                         }
                         if(ipUsuario.isOnline()){
                             listModel.addElement(ipUsuario.getUsuario() + " - conectado :D");

@@ -70,6 +70,9 @@ public class ServidorController implements Runnable{
                     flujoDatos.setUsuarioDTOList(usuarioDTOList);
 
                     for (UsuarioDTO ipUsuario : usuarioDTOList) {
+                        if (ipUsuario.equals(usuarioDTO)) {
+                            ipUsuario.setUsuario(usuarioDTO.getUsuario());
+                        }
                         envioMensaje(ipUsuario.getIp(), flujoDatos);
                         System.out.println(ipUsuario.getUsuario() + " : " + ipUsuario.getIp() + " - conectado :D");
                     }
