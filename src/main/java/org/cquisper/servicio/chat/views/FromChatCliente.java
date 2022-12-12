@@ -41,7 +41,7 @@ public class FromChatCliente extends JFrame {
         jLabel6 = new javax.swing.JLabel();
         lblUsername = new javax.swing.JLabel();
         lblUsernameReceptor = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        lblIconPerfilUsuario = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         txtChatTexto = new javax.swing.JTextField();
         btnEnviar = new javax.swing.JButton();
@@ -86,10 +86,10 @@ public class FromChatCliente extends JFrame {
         lblUsernameReceptor.setText("Username");
         panelChat.add(lblUsernameReceptor, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 40, 170, 30));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI Semilight", 1, 14)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(69, 123, 157));
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/static/img/user-online.png"))); // NOI18N
-        panelChat.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 50, 50));
+        lblIconPerfilUsuario.setFont(new java.awt.Font("Segoe UI Semilight", 1, 14)); // NOI18N
+        lblIconPerfilUsuario.setForeground(new java.awt.Color(69, 123, 157));
+        lblIconPerfilUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/static/img/user-online.png"))); // NOI18N
+        panelChat.add(lblIconPerfilUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 50, 50));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(77, 104, 193));
@@ -207,9 +207,13 @@ public class FromChatCliente extends JFrame {
         return lblEstatus;
     }
 
+    public JLabel getLblIconPerfilUsuario() {
+        return lblIconPerfilUsuario;
+    }
+    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEnviar;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
@@ -219,6 +223,7 @@ public class FromChatCliente extends JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblEstatus;
+    private javax.swing.JLabel lblIconPerfilUsuario;
     private javax.swing.JLabel lblUsername;
     private javax.swing.JLabel lblUsernameReceptor;
     private javax.swing.JLabel lblUsuarioDes;

@@ -32,6 +32,6 @@ public class HistorialChat implements Serializable {
 
     @Override
     public String toString() {
-        return "historial='" + historial + '\'';
+        return "{historial='" + historial + '\'' + "}";
     }
 }

@@ -3,6 +3,7 @@ package org.cquisper.servicio.chat.services;
 import org.cquisper.servicio.chat.models.FlujoDatos;
 import org.cquisper.servicio.chat.models.HistorialChat;
 import org.cquisper.servicio.chat.models.UsuarioDTO;
+import org.cquisper.servicio.chat.util.ImageIconUserUtil;
 import org.cquisper.servicio.chat.views.FromChatCliente;
 
 import javax.swing.*;
@@ -19,6 +20,8 @@ public class ChatServiceImpl implements ChatService{
     private List<UsuarioDTO> ipUsuarios;
 
     private UsuarioDTO usuarioDTOLogin; //Es el usuario que esta usando la app actualmente
+
+    private static ImageIconUserUtil imageIconUserUtil = new ImageIconUserUtil();
 
     public ChatServiceImpl(FromChatCliente chatClienteView) {
         this.chatClienteView = chatClienteView;
@@ -87,13 +90,16 @@ public class ChatServiceImpl implements ChatService{
         String username = chatClienteView.getLsContactosOnline().getSelectedValue();
 
         if(username != null){
-            if(username.contains("desconectado")){
-                chatClienteView.getLblEstatus().setText("En linea hace un momento");
-            }else{
-                chatClienteView.getLblEstatus().setText("En linea");
-            }
+            boolean status = username.contains("desconectado");
+
+            chatClienteView.getLblEstatus().setText(status ? "En linea hace un momento" : "En linea");
+
+            chatClienteView.getLblIconPerfilUsuario().setIcon(imageIconUserUtil.getPerfilUsuario(!status));
+
             username = username.substring(0, username.indexOf("-")).replaceAll(" ", "");
+
             System.out.println("desde mostrarHistorial: " + username);
+
             chatClienteView.getLblUsernameReceptor().setText(username);
         }
     }
@@ -178,7 +184,7 @@ public class ChatServiceImpl implements ChatService{
                 socketRecibido.close();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 
@@ -206,7 +212,7 @@ public class ChatServiceImpl implements ChatService{
             }
 
         }catch (IOException | RuntimeException | ClassNotFoundException e ) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 
@@ -223,7 +229,7 @@ public class ChatServiceImpl implements ChatService{
             flujoNotificacion.writeObject(datosNotificacion);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 
@@ -244,7 +250,7 @@ public class ChatServiceImpl implements ChatService{
             flujoNotificacion.writeObject(datosNotificacion);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            e.printStackTrace(System.out);
         }
     }
 }

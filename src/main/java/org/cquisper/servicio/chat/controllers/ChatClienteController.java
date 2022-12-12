@@ -78,12 +78,9 @@ public class ChatClienteController implements Runnable {
             }
         });
 
-        chatClienteForm.getLsContactosOnline().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                System.out.println("Evento de selección");
-                chatService.mostrarHistorial();
-            }
+        chatClienteForm.getLsContactosOnline().addListSelectionListener(e -> {
+            System.out.println("Evento de selección");
+            chatService.mostrarHistorial();
         });
     }
 
