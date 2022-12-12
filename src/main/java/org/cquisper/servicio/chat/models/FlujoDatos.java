@@ -1,5 +1,6 @@
 package org.cquisper.servicio.chat.models;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,8 @@ public class FlujoDatos implements Serializable {
     private String direcIp;
 
     private String mensaje;
+
+    private UsuarioDTO usuarioDTO;
 
     private List<UsuarioDTO> usuarioDTOList = new ArrayList<>();
 
@@ -52,4 +55,15 @@ public class FlujoDatos implements Serializable {
     public void setUsuarioDTOList(List<UsuarioDTO> usuarioDTOList) {
         this.usuarioDTOList = usuarioDTOList;
     }
+
+    public UsuarioDTO getUsuarioDTO() {
+        return usuarioDTO;
+    }
+
+    public void setUsuarioDTO(UsuarioDTO usuarioDTO) {
+        this.usuarioDTO = usuarioDTO;
+    }
+
+    @Serial
+    private static final long serialVersionUID = 8799656478674716639L;
 }

@@ -6,6 +6,10 @@ public interface ChatService{
 
     void recibirMensaje();
 
+    void recibirHistorial();
+
+    void mostrarHistorial();
+
     void coneccionNotify();
 
     void desconeccionNotify();

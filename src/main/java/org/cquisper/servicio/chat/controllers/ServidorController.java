@@ -10,12 +10,9 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class ServidorController implements Runnable{
+public class ServidorController implements Runnable {
 
     private FromServidor fromServidor;
 
@@ -42,14 +39,14 @@ public class ServidorController implements Runnable{
 
             List<UsuarioDTO> usuarioDTOList;
 
-            while(true){
+            while (true) {
                 Socket miSocket = servidor.accept();
 
                 ObjectInputStream objetoEntrada = new ObjectInputStream(miSocket.getInputStream());
 
                 flujoDatos = (FlujoDatos) objetoEntrada.readObject();
 
-                if(flujoDatos.getMensaje().equals("online")){ //Obtenemos los usuarios online
+                if (flujoDatos.getMensaje().equals("online")) { //Obtenemos los usuarios online
 
                     String ipRemoteUsuario = getIpCliente(miSocket);
 
@@ -67,41 +64,58 @@ public class ServidorController implements Runnable{
 
                     usuarioDTOList = new ArrayList<>(ipUsuarios);
 
-                    flujoDatos.setUsuarioDTOList(usuarioDTOList);
-
-                    for (UsuarioDTO ipUsuario : usuarioDTOList) {
-                        if (ipUsuario.equals(usuarioDTO)) {
-                            ipUsuario.setUsuario(usuarioDTO.getUsuario());
+                    flujoDatos.setUsuarioDTOList(usuarioDTOList.stream().map(userDTO -> {
+                        if (userDTO.equals(usuarioDTO)) {
+                            if (!userDTO.getListHistorialChatt().isEmpty()) {
+                                usuarioDTO.setListHistorialChatt(userDTO.getListHistorialChatt());
+                                getEnviarHistorial(usuarioDTO);
+                            }
+                            userDTO.setUsuario(usuarioDTO.getUsuario());
+                            userDTO.setOnline(true);
+                            return userDTO;
                         }
+                        return userDTO;
+                    }).toList());
+
+                    for (UsuarioDTO ipUsuario : flujoDatos.getUsuarioDTOList()) {
                         envioMensaje(ipUsuario.getIp(), flujoDatos);
                         System.out.println(ipUsuario.getUsuario() + " : " + ipUsuario.getIp() + " - conectado :D");
+                        fromServidor.getTxaRegistro().append("\n" + ipUsuario.getUsuario() + " : " + ipUsuario.getIp() + " - conectado :D");
                     }
 
-                } else if(flujoDatos.getMensaje().equals("offline")){
+                } else if (flujoDatos.getMensaje().equals("offline")) {
 
                     String ipRemoteUsuario = getIpCliente(miSocket);
 
                     UsuarioDTO usuarioDTO = new UsuarioDTO();
 
+                    flujoDatos.setDirecIp(ipRemoteUsuario);
+
                     usuarioDTO.setIp(ipRemoteUsuario);
 
                     usuarioDTO.setUsuario(flujoDatos.getUsername());
 
+                    usuarioDTO.setListHistorialChatt(flujoDatos.getUsuarioDTO().getListHistorialChatt());
+
                     usuarioDTOList = flujoDatos.getUsuarioDTOList().stream().map(userDto -> {
-                        if(userDto.equals(usuarioDTO)){
+                        if (userDto.equals(usuarioDTO)) {
                             userDto.setOnline(false);
+                            userDto.setListHistorialChatt(usuarioDTO.getListHistorialChatt());
                             return userDto;
-                        }else {
+                        } else {
                             return userDto;
                         }
                     }).toList();
+
+                    ipUsuarios = new HashSet<>(usuarioDTOList);
 
                     flujoDatos.setUsuarioDTOList(usuarioDTOList);
 
                     for (UsuarioDTO ipUsuario : usuarioDTOList) {
                         envioMensaje(ipUsuario.getIp(), flujoDatos);
-                        if(!ipUsuario.isOnline()){
+                        if (!ipUsuario.isOnline()) {
                             System.out.println(ipUsuario.getUsuario() + " : " + ipUsuario.getIp() + " - desconectado x");
+                            fromServidor.getTxaRegistro().append("\n" + ipUsuario.getUsuario() + " : " + ipUsuario.getIp() + " - desconectado x");
                         }
                     }
                 } else {
@@ -111,9 +125,23 @@ public class ServidorController implements Runnable{
 
                     mensaje = flujoDatos.getMensaje();
 
+                    String ipRemote = getIpCliente(miSocket);
+
+                    UsuarioDTO usuarioDTORemote = new UsuarioDTO();
+
+                    usuarioDTORemote.setIp(ipRemote);
+
+                    flujoDatos.setUsuarioDTO(usuarioDTORemote);
+
+                    System.out.println(ip + " != " + ipRemote + " = " + !Objects.equals(ip, ipRemote));
+
                     fromServidor.getTxaRegistro().append("\n" + username + ": " + mensaje + " para " + ip);
 
-                    envioMensaje(ip, flujoDatos);
+                    if (!Objects.equals(ip, ipRemote)) {
+
+                        envioMensaje(ip, flujoDatos);
+
+                    }
                 }
 
                 miSocket.close();
@@ -121,6 +149,27 @@ public class ServidorController implements Runnable{
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void getEnviarHistorial(UsuarioDTO usuarioDTOEnvio) {
+        Socket enviaDestinatario;
+        try {
+            enviaDestinatario = new Socket(usuarioDTOEnvio.getIp(), 8989);
+
+            ObjectOutputStream objetoReenvio = new ObjectOutputStream(enviaDestinatario.getOutputStream());
+
+            FlujoDatos datosEnvioUsuarioHistorial = new FlujoDatos();
+
+            datosEnvioUsuarioHistorial.setUsuarioDTO(usuarioDTOEnvio);
+
+            objetoReenvio.writeObject(datosEnvioUsuarioHistorial);
+
+            objetoReenvio.close();
+
+            enviaDestinatario.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -136,7 +185,7 @@ public class ServidorController implements Runnable{
         enviaDestinatario.close();
     }
 
-    private String getIpCliente(Socket socket){
+    private String getIpCliente(Socket socket) {
         InetAddress localizacion = socket.getInetAddress(); //Obtiene la direccion ip del cliente conectado
 
         return localizacion.getHostAddress();

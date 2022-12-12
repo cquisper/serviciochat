@@ -39,7 +39,8 @@ public class FromChatCliente extends JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         txaCampoChat = new javax.swing.JTextArea();
         jLabel6 = new javax.swing.JLabel();
-        txtUsername = new javax.swing.JTextField();
+        lblUsername = new javax.swing.JLabel();
+        lblUsernameReceptor = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         txtChatTexto = new javax.swing.JTextField();
@@ -50,6 +51,8 @@ public class FromChatCliente extends JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         jLabel5 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        lblUsuarioDes = new javax.swing.JLabel();
+        lblEstatus = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(168, 218, 220));
@@ -63,7 +66,8 @@ public class FromChatCliente extends JFrame {
         txaCampoChat.setEditable(false);
         txaCampoChat.setBackground(new java.awt.Color(241, 250, 238));
         txaCampoChat.setColumns(20);
-        txaCampoChat.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        txaCampoChat.setFont(new java.awt.Font("Segoe UI Light", 0, 14)); // NOI18N
+        txaCampoChat.setForeground(new java.awt.Color(35, 35, 35));
         txaCampoChat.setRows(5);
         jScrollPane2.setViewportView(txaCampoChat);
 
@@ -72,18 +76,20 @@ public class FromChatCliente extends JFrame {
         jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/static/img/Rectangle 2.png"))); // NOI18N
         panelChat.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 480, 180));
 
-        txtUsername.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-        txtUsername.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtUsernameActionPerformed(evt);
-            }
-        });
-        panelChat.add(txtUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 50, 240, 30));
+        lblUsername.setFont(new java.awt.Font("Segoe UI Semilight", 1, 14)); // NOI18N
+        lblUsername.setForeground(new java.awt.Color(35, 35, 35));
+        lblUsername.setText("Username");
+        panelChat.add(lblUsername, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 20, 110, 30));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblUsernameReceptor.setFont(new java.awt.Font("Segoe UI Semilight", 1, 14)); // NOI18N
+        lblUsernameReceptor.setForeground(new java.awt.Color(35, 35, 35));
+        lblUsernameReceptor.setText("Username");
+        panelChat.add(lblUsernameReceptor, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 40, 170, 30));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI Semilight", 1, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(69, 123, 157));
-        jLabel1.setText("Username:");
-        panelChat.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 60, -1, -1));
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/static/img/user-online.png"))); // NOI18N
+        panelChat.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 50, 50));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(77, 104, 193));
@@ -92,6 +98,8 @@ public class FromChatCliente extends JFrame {
         jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         panelChat.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(49, 0, 413, 44));
 
+        txtChatTexto.setFont(new java.awt.Font("Segoe UI Light", 0, 14)); // NOI18N
+        txtChatTexto.setForeground(new java.awt.Color(35, 35, 35));
         txtChatTexto.setBorder(null);
         txtChatTexto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -109,13 +117,14 @@ public class FromChatCliente extends JFrame {
                 btnEnviarActionPerformed(evt);
             }
         });
-        panelChat.add(btnEnviar, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 260, 40, 40));
+        panelChat.add(btnEnviar, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 260, 40, 40));
 
         jScrollPane1.setBackground(new java.awt.Color(255, 255, 255));
         jScrollPane1.setBorder(null);
 
         lsContactosOnline.setBackground(new java.awt.Color(242, 243, 251));
         lsContactosOnline.setBorder(null);
+        lsContactosOnline.setFont(new java.awt.Font("Segoe UI Light", 0, 14)); // NOI18N
         lsContactosOnline.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
@@ -123,28 +132,38 @@ public class FromChatCliente extends JFrame {
         });
         jScrollPane1.setViewportView(lsContactosOnline);
 
-        panelChat.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 60, 160, 230));
+        panelChat.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 80, 160, 230));
 
         jLabel3.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Segoe UI Semilight", 1, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Contactos");
-        panelChat.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 20, 128, -1));
+        panelChat.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 50, 128, 30));
 
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
         panelChat.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 420, -1));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/static/img/Group 1.png"))); // NOI18N
-        panelChat.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 0, 200, 310));
+        panelChat.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 50, 200, 260));
 
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/static/img/Rectangle 5.png"))); // NOI18N
         panelChat.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 260, -1, 50));
+
+        lblUsuarioDes.setFont(new java.awt.Font("Segoe UI Light", 0, 12)); // NOI18N
+        lblUsuarioDes.setForeground(new java.awt.Color(35, 35, 35));
+        lblUsuarioDes.setText("Usuario:");
+        panelChat.add(lblUsuarioDes, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 0, 60, 30));
+
+        lblEstatus.setFont(new java.awt.Font("Segoe UI Light", 0, 12)); // NOI18N
+        lblEstatus.setForeground(new java.awt.Color(35, 35, 35));
+        lblEstatus.setText("En linea");
+        panelChat.add(lblEstatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 60, 170, 30));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelChat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(panelChat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -154,20 +173,10 @@ public class FromChatCliente extends JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtUsernameActionPerformed
-
     private void btnEnviarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEnviarActionPerformed
-        if (txtChatTexto.getText() == null || txtChatTexto.getText().equals("")) {
-            JOptionPane.showMessageDialog(null, "Escribe algo");
-        }
     }//GEN-LAST:event_btnEnviarActionPerformed
 
     private void txtChatTextoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtChatTextoActionPerformed
-        if (txtChatTexto.getText() == null || txtChatTexto.getText().equals("")) {
-            JOptionPane.showMessageDialog(null, "Escribe algo");
-        }
     }//GEN-LAST:event_txtChatTextoActionPerformed
 
     public JButton getBtnEnviar() {
@@ -178,10 +187,6 @@ public class FromChatCliente extends JFrame {
         return lsContactosOnline;
     }
     
-    public JTextField getTxtUsername() {
-        return txtUsername;
-    }
-
     public JTextArea getTxaCampoChat() {
         return txaCampoChat;
     }
@@ -189,8 +194,19 @@ public class FromChatCliente extends JFrame {
     public JTextField getTxtChatTexto() {
         return txtChatTexto;
     }
-    
-    
+
+    public JLabel getLblUsername() {
+        return lblUsername;
+    }
+
+    public JLabel getLblUsernameReceptor() {
+        return lblUsernameReceptor;
+    }
+
+    public JLabel getLblEstatus() {
+        return lblEstatus;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEnviar;
     private javax.swing.JLabel jLabel1;
@@ -202,10 +218,13 @@ public class FromChatCliente extends JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lblEstatus;
+    private javax.swing.JLabel lblUsername;
+    private javax.swing.JLabel lblUsernameReceptor;
+    private javax.swing.JLabel lblUsuarioDes;
     private javax.swing.JList<String> lsContactosOnline;
     private javax.swing.JPanel panelChat;
     private javax.swing.JTextArea txaCampoChat;
     private javax.swing.JTextField txtChatTexto;
-    private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }

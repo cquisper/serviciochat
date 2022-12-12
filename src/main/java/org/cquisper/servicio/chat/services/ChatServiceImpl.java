@@ -1,6 +1,7 @@
 package org.cquisper.servicio.chat.services;
 
 import org.cquisper.servicio.chat.models.FlujoDatos;
+import org.cquisper.servicio.chat.models.HistorialChat;
 import org.cquisper.servicio.chat.models.UsuarioDTO;
 import org.cquisper.servicio.chat.views.FromChatCliente;
 
@@ -9,6 +10,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
+import java.util.Objects;
 
 public class ChatServiceImpl implements ChatService{
 
@@ -16,8 +18,11 @@ public class ChatServiceImpl implements ChatService{
 
     private List<UsuarioDTO> ipUsuarios;
 
+    private UsuarioDTO usuarioDTOLogin; //Es el usuario que esta usando la app actualmente
+
     public ChatServiceImpl(FromChatCliente chatClienteView) {
         this.chatClienteView = chatClienteView;
+        this.usuarioDTOLogin = new UsuarioDTO();
     }
 
     @Override
@@ -26,15 +31,19 @@ public class ChatServiceImpl implements ChatService{
 
             ObjectOutput objetoEnvio = new ObjectOutputStream(envioMensajeSocket.getOutputStream())){
 
-            chatClienteView.getTxaCampoChat().append("\n" + "tú: " + chatClienteView.getTxtChatTexto().getText());
+            String mensaje = "tú: " + chatClienteView.getTxtChatTexto().getText() + "\n";
+
+            chatClienteView.getTxaCampoChat().append(mensaje);
 
             FlujoDatos flujoDatos = new FlujoDatos();
 
-            flujoDatos.setUsername(chatClienteView.getTxtUsername().getText());
+            flujoDatos.setUsername(chatClienteView.getLblUsername().getText());
 
             String ipDestino = getIpDestino();
 
             flujoDatos.setDirecIp(ipDestino); //Ip del cliente a recibir el mensaje
+
+            addHistorialChats(mensaje, ipDestino);
 
             flujoDatos.setMensaje(chatClienteView.getTxtChatTexto().getText());
 
@@ -45,16 +54,67 @@ public class ChatServiceImpl implements ChatService{
         }
     }
 
+    private void addHistorialChats(String mensaje, String ipDestino) {
+
+        boolean contains = (usuarioDTOLogin.getListHistorialChatt().stream().anyMatch(historialChat -> historialChat.getIpReceptor().equals(ipDestino)));
+
+        if((usuarioDTOLogin.getListHistorialChatt().isEmpty() || !contains)) { // Es nuevo no tiene historial
+            HistorialChat historialChat = new HistorialChat(mensaje, ipDestino);
+            usuarioDTOLogin.addHistorialChat(historialChat);
+        }else{ //Obvio no es nuevo asi que se le aumenta el chat
+            usuarioDTOLogin.setListHistorialChatt(usuarioDTOLogin.getListHistorialChatt().stream().map(historialChat -> {
+                if(Objects.equals(historialChat.getIpReceptor(), ipDestino)){
+                    historialChat.setHistorial(historialChat.getHistorial().concat(mensaje));
+                    return historialChat;
+                }
+                return historialChat;
+            }).toList());
+            usuarioDTOLogin.getListHistorialChatt().forEach(System.out::println);
+        }
+    }
+
+    @Override
+    public void mostrarHistorial() {
+        String ipReceptor = getIpDestino();
+        chatClienteView.getTxaCampoChat().setText("");
+        usuarioDTOLogin.getListHistorialChatt().forEach(historialChat -> {
+            if(historialChat.getIpReceptor().equals(ipReceptor)){
+                System.out.println(historialChat.getHistorial());
+                chatClienteView.getTxaCampoChat().setText(historialChat.getHistorial());
+            }
+        });
+
+        String username = chatClienteView.getLsContactosOnline().getSelectedValue();
+
+        if(username != null){
+            if(username.contains("desconectado")){
+                chatClienteView.getLblEstatus().setText("En linea hace un momento");
+            }else{
+                chatClienteView.getLblEstatus().setText("En linea");
+            }
+            username = username.substring(0, username.indexOf("-")).replaceAll(" ", "");
+            System.out.println("desde mostrarHistorial: " + username);
+            chatClienteView.getLblUsernameReceptor().setText(username);
+        }
+    }
+
     private String getIpDestino() {
-        DefaultListModel<String> listModel = (DefaultListModel<String>) chatClienteView.getLsContactosOnline().getModel();
 
-        String username = listModel.getElementAt(chatClienteView.getLsContactosOnline().getSelectedIndex()).replaceAll(" ", "");
+        String username = chatClienteView.getLsContactosOnline().getSelectedValue();
 
-        username = username.substring(0, username.indexOf("-"));
+        if(username == null){
+            return "";
+        }
+
+        System.out.println(username);
+
+        username = username.substring(0, username.indexOf("-")).replaceAll(" ", "");
+
+        System.out.println("getIpDestino: " + username);
 
         String finalUsername = username;
 
-        return ipUsuarios.stream().filter(usuarioDTO -> usuarioDTO.getUsuario().equals(finalUsername)).findAny().orElseThrow().getIp();
+        return ipUsuarios.stream().peek(System.out::println).filter(usuarioDTO -> usuarioDTO.getUsuario().equals(finalUsername)).findAny().orElseThrow().getIp();
     }
 
     @Override
@@ -89,30 +149,63 @@ public class ChatServiceImpl implements ChatService{
                     usuarioDTOrepetido.setIp(flujoDatosRecibido.getDirecIp());
 
                     for (UsuarioDTO ipUsuario : ipUsuarios) {
-                        if(ipUsuario.equals(usuarioDTOrepetido)){
-                            System.out.println("usuario repetido");
-                            //chatClienteView.getTxtUsername().setText(ipUsuario.getUsuario());
-                        }
                         if(ipUsuario.isOnline()){
                             listModel.addElement(ipUsuario.getUsuario() + " - conectado :D");
                         }else {
                             listModel.addElement(ipUsuario.getUsuario() + " - desconectado x");
                         }
                     }
-
                     chatClienteView.getLsContactosOnline().setModel(listModel);
+                    int userIndex = 0;
+                    for (int i = 0; i < ipUsuarios.size(); i++) {
+                        if(ipUsuarios.get(i).equals(usuarioDTOrepetido)){
+                            System.out.println( "i = " + i);
+                            userIndex = i;
+                        }
+                    }
 
-                    chatClienteView.getLsContactosOnline().setSelectedIndex(0);
+                    chatClienteView.getLsContactosOnline().setSelectedIndex(userIndex);
 
+                    mostrarHistorial();
                 }else{
                     //chatClienteView.getTxaCampoChat().append("\n" + flujoDatosRecibido.getUsername() + ": " + flujoDatosRecibido.getMensaje() + " para " + flujoDatosRecibido.getDirecIp());
-                    chatClienteView.getTxaCampoChat().append("\n" + flujoDatosRecibido.getUsername() + ": " + flujoDatosRecibido.getMensaje());
+                    String mensaje = flujoDatosRecibido.getUsername() + ": " + flujoDatosRecibido.getMensaje() + "\n";
+                    chatClienteView.getTxaCampoChat().append(mensaje);
+                    addHistorialChats(mensaje, flujoDatosRecibido.getUsuarioDTO().getIp());
                 }
                 objetoEntrada.close();
 
                 socketRecibido.close();
             }
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void recibirHistorial() {
+        try(ServerSocket coneccionUsuario = SocketServidor.getServerSocketUsuario()){;
+            Socket socketRecibidoUsuario;
+
+            ObjectInput objetoRecibido;
+
+            FlujoDatos flujoDatosRecibido;
+
+            while(true) {
+                socketRecibidoUsuario = coneccionUsuario.accept();
+
+                objetoRecibido = new ObjectInputStream(socketRecibidoUsuario.getInputStream());
+
+                flujoDatosRecibido = (FlujoDatos) objetoRecibido.readObject();
+
+                usuarioDTOLogin = flujoDatosRecibido.getUsuarioDTO();
+
+                objetoRecibido.close();
+
+                socketRecibidoUsuario.close();
+            }
+
+        }catch (IOException | RuntimeException | ClassNotFoundException e ) {
             e.printStackTrace();
         }
     }
@@ -125,7 +218,7 @@ public class ChatServiceImpl implements ChatService{
 
             FlujoDatos datosNotificacion = new FlujoDatos("online");
 
-            datosNotificacion.setUsername(chatClienteView.getTxtUsername().getText());
+            datosNotificacion.setUsername(chatClienteView.getLblUsername().getText());
 
             flujoNotificacion.writeObject(datosNotificacion);
 
@@ -144,7 +237,9 @@ public class ChatServiceImpl implements ChatService{
 
             datosNotificacion.setUsuarioDTOList(ipUsuarios);
 
-            datosNotificacion.setUsername(chatClienteView.getTxtUsername().getText());
+            datosNotificacion.setUsername(chatClienteView.getLblUsername().getText());
+
+            datosNotificacion.setUsuarioDTO(usuarioDTOLogin);
 
             flujoNotificacion.writeObject(datosNotificacion);
 

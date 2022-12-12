@@ -18,4 +18,9 @@ public class SocketServidor {
 
         return new ServerSocket(9090); //Puerto del cliente a enviar el flujo de datos
     }
+
+    public static ServerSocket getServerSocketUsuario() throws IOException {
+
+        return new ServerSocket(8989); //Puerto del cliente a enviar el flujo de datos
+    }
 }

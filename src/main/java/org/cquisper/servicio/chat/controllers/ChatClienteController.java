@@ -5,6 +5,8 @@ import org.cquisper.servicio.chat.services.ChatServiceImpl;
 import org.cquisper.servicio.chat.views.FromChatCliente;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -17,19 +19,33 @@ public class ChatClienteController implements Runnable {
 
         chatClienteForm = new FromChatCliente();
 
-        chatClienteForm.getTxtUsername().setText(username);
+        chatClienteForm.getLblUsername().setText(username);
 
         chatClienteForm.setVisible(true);
-
-        chatClienteForm.getTxtUsername().setEditable(false);
 
         chatService = new ChatServiceImpl(chatClienteForm);
 
         initEventos();
 
+        chatClienteForm.getTxtChatTexto().requestFocus();
+
         new Thread(this).start();
 
-        chatClienteForm.getTxtChatTexto().requestFocus();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        initHistorialNotify();
+    }
+
+    private void initHistorialNotify() {
+        Runnable runHistorialChats = () -> {
+            System.out.println("entro recibir notify");
+            chatService.recibirHistorial();
+        };
+        new Thread(runHistorialChats).start();
     }
 
     private void initEventos() {
@@ -61,17 +77,28 @@ public class ChatClienteController implements Runnable {
                 }
             }
         });
+
+        chatClienteForm.getLsContactosOnline().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                System.out.println("Evento de selección");
+                chatService.mostrarHistorial();
+            }
+        });
     }
 
     @Override
     public void run() {
+        System.out.println("entro recibir mensaje");
+
         chatService.recibirMensaje();
+
     }
 
     public static void main(String[] args) {
         System.out.println("Iniciando aplicación");
 
-        String username = JOptionPane.showInputDialog("Introduce su nombre de usuario");
+        String username = JOptionPane.showInputDialog("Introduzca su nombre de usuario");
 
         new ChatClienteController(username);
     }
